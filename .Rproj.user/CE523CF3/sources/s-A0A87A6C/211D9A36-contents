@@ -8,6 +8,7 @@ using Eigen::VectorXd;                  // variable size vector, double precisio
 using Eigen::SelfAdjointEigenSolver;    // one of the eigenvalue solvers
 using Eigen::ColPivHouseholderQR;
 using Eigen::FullPivHouseholderQR;
+using Eigen::HouseholderQR;
 
 // [[Rcpp::export]]
 VectorXd colpiv(Map<MatrixXd> M, Map<VectorXd> b) {
@@ -23,6 +24,17 @@ VectorXd colpiv(Map<MatrixXd> M, Map<VectorXd> b) {
 VectorXd fullpiv(Map<MatrixXd> M, Map<VectorXd> b) {
   FullPivHouseholderQR<MatrixXd> dec(M);
   VectorXd x = dec.solve(b);
+  // SelfAdjointEigenSolver<MatrixXd> es(M);
+  // double relative_error = (M*x - b).norm() / b.norm(); // norm() is L2 norm
+  // std::cout << "The relative error is:\n" << relative_error << std::endl;
+  return x;
+}
+
+// [[Rcpp::export]]
+VectorXd hh(Map<MatrixXd> M, Map<VectorXd> b) {
+  HouseholderQR<MatrixXd> hh;
+  hh.compute(M);
+  VectorXd x = hh.solve(b);
   // SelfAdjointEigenSolver<MatrixXd> es(M);
   // double relative_error = (M*x - b).norm() / b.norm(); // norm() is L2 norm
   // std::cout << "The relative error is:\n" << relative_error << std::endl;
